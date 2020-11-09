@@ -289,7 +289,7 @@ export default {
     height: 100%;
     background-color: #fff;
     .card{
-      margin-top: 160px;
+      margin-top: 50px;
     }
     .btn-login {
       margin-top: 20px;
