@@ -1,9 +1,18 @@
-import { state } from './state';
 import { createStore } from 'vuex';
 
 export default createStore({
-  state,
-  mutations: {},
+  state: {
+    username: '',
+    school: '',
+    role: '',
+  },
+  mutations: {
+    setMsg(state, payload) {
+      state.username = payload.username
+      state.school = payload.school,
+      state.role = payload.role
+    }
+  },
   actions: {},
   modules: {},
 })

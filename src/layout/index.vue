@@ -1,0 +1,80 @@
+<template>
+  <van-nav-bar left-text="返回" left-arrow @click-left="toBack">
+    <template #right>
+      <van-icon v-show="isShowPer" name="contact" size="18" @click="toPersonal"/>
+    </template>
+  </van-nav-bar>
+   <!-- v-model="state.activeName" -->
+  <van-tabs v-show="isShowPer" @click="tabClick">
+    <van-tab v-for="item in state.title[store.state.role]" :title="item.text" :name="item.value"> </van-tab>
+  </van-tabs>
+  <router-view :key="key" />
+</template>
+<script lang="ts">
+import { reactive, ref, computed, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
+import store from '/@/store'
+
+export default {
+  setup(props, context) {
+    const state = reactive({
+      title: {
+        teacher: [
+          {text: "学生评价", value: '/w'},
+          {text: "历史评价", value: '/w'},
+          {text: "历史积分", value: '/w'},
+          {text: "学生信息", value: '/w'},
+          {text: "评价统计", value: '/w'},
+          {text: "排行榜", value: '/w'},
+          {text: "期末评语", value: '/w'},
+        ],
+        president: [
+          {text: "老师积分", value: '/page/pc/s/teacherScore'},
+          {text: "家庭积分", value: '/page/pc/s/familyScore'},
+          {text: "历史积分", value: '/w3'},
+          {text: "评价统计", value: '/w5'},
+          {text: "排行榜", value: '/w'},
+          {text: "基础数据", value: '/w'},
+          {text: "期末评语", value: '/w'},
+        ],
+        admin: [
+          {text: "老师积分", value: '/w1'},
+        ]
+      },
+      activeName: ''
+    })
+    const route = useRouter()
+    const key = computed(() => route.currentRoute.value.fullPath)
+    const isShowPer = computed(() => route.currentRoute.value.fullPath !== '/personal/index')
+    const { push, go } = useRouter()
+
+    function toBack() {
+      go(-1)
+    }
+
+    function toPersonal() {
+      push('/personal/index')
+    }
+
+    function tabClick(name, title) {
+      push(name)
+    }
+
+    onMounted(() => {
+    })
+
+    return {
+      state,
+      key,
+      isShowPer,
+      toPersonal,
+      toBack,
+      tabClick,
+      store
+    }
+  }
+}
+</script>
+<style lang="scss" scoped>
+
+</style>

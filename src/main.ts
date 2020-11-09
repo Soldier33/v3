@@ -4,12 +4,13 @@ import store from './store'
 import router from './router'
 
 import './index.css'
-import Vant from 'vant';
+import Vant, { Notify } from 'vant';
 import 'vant/lib/index.css';
 
 
 const app = createApp(App)
 app.use(Vant)
+app.use(Notify)
 app.use(store)
 app.use(router)
 app.mount('#app')
