@@ -1,10 +1,8 @@
 <template>
   <div class="main">
-    <van-row justify="center">
-      <h2 class="title">学校评价系统</h2>
-    </van-row>
     <div class="card">
       <van-row type="flex" justify="center" class="card-row">
+        <h2 class="title">学校评价系统</h2>
         <van-col span="18">
           <!-- 请选择城市 -->
           <van-field
@@ -286,9 +284,12 @@ export default {
 </script>
 <style lang="scss" scoped>
   .main {
-    margin-top: 60px;
-    .card {
-      border-radius:25px;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background-color: #fff;
+    .card{
+      margin-top: 160px;
     }
     .btn-login {
       margin-top: 20px;
