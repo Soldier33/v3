@@ -13,11 +13,16 @@
       />
     </van-dropdown-menu>
   </div>
-  <swiper-table :headData="state.headData"></swiper-table>
+  <swiper-table
+    :headData="state.headData"
+    :headProps="state.headProps"
+    :tableData="state.tableData"
+    ref="table"
+  ></swiper-table>
   <van-pagination v-model="state.currentPage" :page-count="state.count" mode="simple" />
 </template>
 <script lang="ts">
-import { createApp, reactive, computed, onMounted, nextTick } from 'vue'
+import { createApp, reactive, computed, onMounted, nextTick, ref } from 'vue'
 import store from '/@/store'
 import swiperTable from "/@/components/swiperTable.vue"
 import { getData } from "/@/api/president/teacherScore";
@@ -40,13 +45,18 @@ export default {
       },
       currentPage: 0,
       count: 0,
-      headData: ['排名', '老师', '任课班级', '总积分', '关注率']
+      headData: ['排名', '老师', '总积分', '关注率', '任课班级'],
+      headProps: ['rank', 'name', 'totalScores', 'attentionRate', 'classesName'],
+      tableData: [],
     })
+
+    const table = ref(null)
 
     const getMyData = (() => {
       getData(state.searchValue).then((res) => {
-        console.log(res);
         state.count = Math.ceil(res.result.totalnum / 10)
+        state.tableData = res.result.data
+        table.value.print()
       })
     })
 
@@ -56,7 +66,8 @@ export default {
 
     return {
       state,
-      getMyData
+      getMyData,
+      table
     };
   }
 }
