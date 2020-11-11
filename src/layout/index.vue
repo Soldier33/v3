@@ -4,7 +4,6 @@
       <van-icon v-show="isShowPer" name="contact" size="18" @click="toPersonal"/>
     </template>
   </van-nav-bar>
-   <!-- v-model="state.activeName" -->
   <van-tabs v-show="isShowPer" @click="tabClick">
     <van-tab v-for="item in state.title[store.state.role]" :title="item.text" :name="item.value"> </van-tab>
   </van-tabs>
@@ -48,17 +47,17 @@ export default {
     const isShowPer = computed(() => route.currentRoute.value.fullPath !== '/personal/index')
     const { push, go } = useRouter()
 
-    function toBack() {
+    const toBack = (() => {
       go(-1)
-    }
+    })
 
-    function toPersonal() {
+    const toPersonal = (() => {
       push('/personal/index')
-    }
+    })
 
-    function tabClick(name, title) {
+    const tabClick = ((name, title) => {
       push(name)
-    }
+    })
 
     onMounted(() => {
     })
@@ -76,5 +75,4 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
-
 </style>

@@ -19,11 +19,10 @@ service.interceptors.response.use(
   response => {
     const res = response.data
     if (res.code === -1) {
-      console.log(res);
       Notify({ type: 'danger', message: res.msg })
-      // setTimeout(() => {
-      //   location.href = '/'
-      // }, 2000)
+      setTimeout(() => {
+        location.href = '/'
+      }, 2000)
       // return Promise.reject(new Error(res.msg || 'Error'))
     } else {
       return res
