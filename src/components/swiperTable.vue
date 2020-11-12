@@ -2,20 +2,20 @@
   <div class="topNav_all">
     <div class="topNav_left">
       <div class="topNav_title">
-        <span class="fix-active">{{ state.firstHead }}</span>
+        <span class="fix-active" :style="titleClass">{{ firstHead.text }}</span>
       </div>
-      <div v-for="item of data" class="topNav_title">
-        <span class="fix-active">{{ item[state.firstProps] }}</span>
+      <div v-for="item of data" :key="item" class="topNav_title">
+        <span class="fix-active" :style="titleClass">{{ item[firstHead.value] }}</span>
       </div>
     </div>
     <ul id="topNav" class="swiper-container">
       <li class="swiper-wrapper">
-        <div class="swiper-slide" v-for="item of props.headData.slice(1)"><span>{{ item }}</span></div>
+        <div class="swiper-slide" :style="{ 'width': item.width ? item.width : '100px'}" v-for="item of otherHead" :key="item.text"><span>{{ item.text }}</span></div>
       </li>
 
-      <template v-for="item of data" :key='item'>
+      <template v-for="itemTable of data" :key='itemTable'>
         <li class="swiper-wrapper">
-          <div class="swiper-slide1" :class="itemProps" v-for="itemProps of props.headProps.slice(1)" ><span> {{ item[itemProps] }}</span></div>
+          <div class="swiper-slide1" :style="{ 'width': item.width ? item.width : '100px'}" v-for="item of otherHead" :key="item.text"><span> {{ itemTable[item.value] }}</span></div>
         </li>
       </template>
     </ul>
@@ -27,80 +27,60 @@ import Swiper from 'swiper'
 import 'swiper/css/swiper.css'
 export default {
   props: {
-    // headData: [String],
-    // headProps: [String],
     headData: Array,
-    headProps: Array,
     tableData: Array,
   },
   setup(props) {
     const state = reactive({
-      firstHead: '',
-      firstProps: '',
-      maxWidth: 0
-    })
-
-    onMounted(() => {
-      
-      
+      swiper: null
     })
 
     const print = (() => {
       nextTick(() => {
-        new Swiper('#topNav', {
+        if (state.swiper) {
+          state.swiper.destroy()
+        }
+        state.swiper = new Swiper('#topNav', {
             freeMode: true,
             slidesPerView: 'auto',
             resistanceRatio: 0,
             observer:true,
             observeParents:true,
-        })
-
-        // var divb = document.getElementsByClassName("classesName")
-        // // for (let i = 1; i < divb.length; i++) {
-        // //   const max = divb.item(i).offsetWidth : 
-        // // }
-        // state.maxWidth = divb.item(0).offsetWidth
-        // // for (let i = 1; i < divb.length; i++) {
-        // //   console.log(divb.item(i));
-          
-        // //   divb.item(i).style.width = maxWid
-        // //   divb.item(i).style.color = 'red'
-        // // }
-        // console.log(state.maxWidth);
-        
+        })      
       })
-      state.firstHead = props.headData[0]
-      state.firstProps = props.headProps[0]
-
-      
-    })
-
-    
-
-    const getBannerStyle = computed(() => {
-      return 'width: ' + state.maxWidth + 'px;';
     })
 
     const data = computed(() => {
       return props.tableData
     })
 
-    const firstData = computed(() => {
-      return props.tableData[0]
+    const firstHead = computed(() => {
+      return props.headData[0]
+    })
+
+    const otherHead = computed(() => {
+      return props.headData.slice(1)
+    })
+
+    const titleClass = computed(() => {
+      const newWidth = props.headData[0]['width']
+      return {
+        'width': newWidth ? newWidth : '100px',
+      }
     })
 
     watch(props.tableData, (val) => {
-      
       return val
     })
 
     return {
       state,
       props,
-      firstData,
+      firstHead,
+      otherHead,
       data,
       print,
-      getBannerStyle
+      titleClass,
     }
   },
 };
@@ -116,7 +96,6 @@ export default {
   color:black;
   background: white;
   .topNav_left{
-    // width:114px;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -125,13 +104,14 @@ export default {
     overflow:hidden;          /* 隐藏溢出部分 */ 
     text-overflow:ellipsis;   /* 显示省略符号来代表被隐藏的文本 */
     .fix-active{
-      min-width:113px;
       height: 35px;
       line-height: 35px;
       display: flex;
-      width: fit-content;
       justify-content: center;
       align-items: center;
+      white-space:nowrap;       /* 使文本不可换行 */
+      overflow:hidden;          /* 隐藏溢出部分 */ 
+      text-overflow:ellipsis;   /* 显示省略符号来代表被隐藏的文本 */
     }
     .fix-active:nth-of-type(1){
       border-top:1px solid #ccc;
@@ -143,7 +123,7 @@ export default {
     .swiper-wrapper{
       .swiper-slide {
         padding: 0 5px;
-        width:90px;
+        // min-width:  0px;
         height: 35px;
         line-height: 35px;
         text-align:center;
@@ -151,20 +131,21 @@ export default {
         background: white;
         span{
           transition:width .3s ease;
-          display:block;
+          // display:block;
         }
       }
       .swiper-slide1 {
         padding: 0 5px;
-        min-width:90px;
         text-align:center;
         height: 35px;
         line-height: 35px;
         flex-shrink: 0;
         border-top:1px solid #ccc;
+        white-space:nowrap;       /* 使文本不可换行 */
+        overflow:hidden;          /* 隐藏溢出部分 */ 
+        text-overflow:ellipsis;   /* 显示省略符号来代表被隐藏的文本 */
         span{
           transition:width .3s ease;
-          display:block;
         }
       }
     }

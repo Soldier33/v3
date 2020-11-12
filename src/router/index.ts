@@ -41,7 +41,8 @@ router.beforeEach((to, from, next) => {
       const user = {
         username: sessionStorage.getItem("username"),
         school: sessionStorage.getItem("school"),
-        role: sessionStorage.getItem("role")
+        role: sessionStorage.getItem("role"),
+        schoolId: sessionStorage.getItem("schoolId"),
       }
       store.commit('setMsg', user)
       next()

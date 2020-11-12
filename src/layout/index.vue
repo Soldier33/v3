@@ -4,8 +4,8 @@
       <van-icon v-show="isShowPer" name="contact" size="18" @click="toPersonal"/>
     </template>
   </van-nav-bar>
-  <van-tabs v-show="isShowPer" @click="tabClick">
-    <van-tab v-for="item in state.title[store.state.role]" :title="item.text" :name="item.value"> </van-tab>
+  <van-tabs :active="state.active" v-show="isShowPer" @click="tabClick" color="#1989fa">
+    <van-tab v-for="(item, index) in state.title[store.state.role]" :title="item.text" :name="index"> </van-tab>
   </van-tabs>
   <router-view :key="key" />
 </template>
@@ -40,7 +40,7 @@ export default {
           {text: "老师积分", value: '/w1'},
         ]
       },
-      activeName: ''
+      active: 0
     })
     const route = useRouter()
     const key = computed(() => route.currentRoute.value.fullPath)
@@ -56,11 +56,10 @@ export default {
     })
 
     const tabClick = ((name, title) => {
-      push(name)
+      push(state.title[store.state.role][name].value)
     })
 
-    onMounted(() => {
-    })
+    state.active = state.title[store.state.role].findIndex((item) => { return item.value === key.value })
 
     return {
       state,

@@ -220,8 +220,7 @@ export default {
           sessionStorage.setItem("username", state.user.username);
           sessionStorage.setItem("school", state.user.school);
           sessionStorage.setItem("role", state.user.role);
-          console.log(sessionStorage.getItem("username"));
-          
+          sessionStorage.setItem("schoolId", state.user.schoolId.toString());
           push(res.detail)
         } else if (res.code === 202) {
           Notify({ type: 'danger', message: res.detail });
