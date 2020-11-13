@@ -1,11 +1,4 @@
 <template>
-  <div class="search">
-    <van-search
-      v-model="state.searchValue.keyword"
-      placeholder="请输入学生姓名"
-      @search="getMyData"
-    />
-  </div>
   <div class="week">
     <van-dropdown-menu active-color="#1989fa">
       <van-dropdown-item
@@ -17,10 +10,17 @@
         v-model="state.searchValue.classId"
         :options="state.classOption"
       />
+    </van-dropdown-menu>
+    <van-dropdown-menu active-color="#1989fa">
       <van-dropdown-item
         v-model="state.searchValue.week"
         :options="state.weekOption"
-        @change="changeWeek"
+        @change="changeValue"
+      />
+      <van-dropdown-item
+        v-model="state.searchValue.type"
+        :options="state.typeOption"
+        @change="changeValue"
       />
     </van-dropdown-menu>
   </div>
@@ -33,18 +33,12 @@
   <div v-show="state.isLoading" class="loading">
     <van-loading type="spinner" color="#1989fa" />
   </div>
-  <van-pagination
-    v-model="state.currentPage"
-    :page-count="state.count"
-    mode="simple"
-    @change="getMyData"
-  />
 </template>
 <script lang="ts">
 import { createApp, reactive, computed, onMounted, nextTick, ref } from "vue";
 import store from "/@/store";
 import swiperTable from "/@/components/swiperTable.vue";
-import { getData, getOption } from "/@/api/president/history/evaluate";
+import { getData, getOption, getTypeOption } from "/@/api/president/rank";
 
 export default {
   components: { swiperTable },
@@ -55,22 +49,19 @@ export default {
       classOption: [],
       tempOption: [],
       weekOption: [],
+      typeOption: [],
       searchValue: {
         pindex: 0,
         number: 10,
         keyword: "",
         classId: "",
         week: 0,
+        type: 0,
       },
-      count: 0,
-      currentPage: 1,
       headData: [
-        { text: "学号", value: "id" },
-        { text: "姓名", value: "studentName" },
-        { text: "评价内容", value: "content" },
-        { text: "分值", value: "score" },
-        { text: "评价人", value: "teacherName" },
-        { text: "评价时间", value: "time" },
+        { text: "名次", value: "id", width: '76px' },
+        { text: "姓名", value: "name", width: '150px' },
+        { text: "本周得分", value: "scores", width: '150px' },
       ],
       tableData: [],
       isLoading: false,
@@ -83,11 +74,14 @@ export default {
       state.isLoading = true;
       getData(state.searchValue).then((res) => {
         state.count = Math.ceil(res.result.totalnum / 10);
-        state.tableData = res.result.data;
+        res.result.data.forEach((item, index) => {
+          item['id'] = index + 1
+        })
+        state.tableData = res.result.data
         state.isLoading = false;
         table.value.print();
       });
-    }
+    };
 
     const changeGrade = (value) => {
       const target = state.tempOption.find((item) => {
@@ -108,7 +102,7 @@ export default {
       getMyData();
     };
 
-    const changeWeek = (value) => {
+    const changeValue = (value) => {
       getMyData();
     };
 
@@ -161,12 +155,21 @@ export default {
               state.searchValue.classId = state.classOption[0].value;
             }
           }
-          resolve()
+          getTypeOption().then((res) => {
+            res.result.data.forEach((item) => {
+              state.typeOption.push({
+                text: item.title,
+                value: item.id,
+              });
+            })
+            state.searchValue.type = state.typeOption[0].value;
+            resolve()
+          })
         });
-      });
+      })
 
       promise1.then(() => {
-        getMyData();
+        getMyData()
       });
     });
 
@@ -175,7 +178,7 @@ export default {
       getMyData,
       table,
       changeGrade,
-      changeWeek,
+      changeValue,
     };
   },
 };

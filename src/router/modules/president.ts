@@ -19,6 +19,10 @@ const presidentRoutes = [
       {
         path: 'history',
         component: () => import('/@/views/president/history/index.vue'),
+      },
+      {
+        path: 'rank',
+        component: () => import('/@/views/president/rank.vue'),
       }
     ]
   },

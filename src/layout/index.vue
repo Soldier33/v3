@@ -32,7 +32,7 @@ export default {
           {text: "家庭积分", value: '/page/pc/s/familyScore'},
           {text: "历史情况", value: '/page/pc/s/history'},
           {text: "评价统计", value: '/w5'},
-          {text: "排行榜", value: '/w'},
+          {text: "排行榜", value: '/page/pc/s/rank'},
           {text: "基础数据", value: '/w'},
           {text: "期末评语", value: '/w'},
         ],

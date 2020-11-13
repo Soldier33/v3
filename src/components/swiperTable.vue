@@ -164,10 +164,16 @@ export default {
     }
   }
 }
+.default-76px{
+  width: 76px;
+}
 .default-100px{
   width:100px
 }
 .default-200px{
   width: 200px;
+}
+.default-150px{
+  width: 150px;
 }
 </style>
