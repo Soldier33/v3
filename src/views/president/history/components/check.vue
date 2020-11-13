@@ -1,19 +1,11 @@
 <template>
-  <div class="search">
-    <van-search
-    v-model="state.searchValue.keyword"
-    placeholder="请输入老师姓名"
-    @search="getMyData" />
-  </div>
-  <div class="week">
-    <van-dropdown-menu active-color="#1989fa">
-      <van-dropdown-item
-        v-model="state.searchValue.week"
-        :options="state.weekOption"
-        @change="changeWeek"
-      />
-    </van-dropdown-menu>
-  </div>
+  <van-dropdown-menu active-color="#1989fa">
+    <van-dropdown-item
+      v-model="state.searchValue.subject"
+      :options="state.subjectOption"
+      @change="changeWeek"
+    />
+  </van-dropdown-menu>
   <swiper-table  v-show="!state.isLoading"
     :headData="state.headData"
     :headProps="state.headProps"
@@ -33,31 +25,30 @@
 import { createApp, reactive, computed, onMounted, nextTick, ref } from 'vue'
 import store from '/@/store'
 import swiperTable from "/@/components/swiperTable.vue"
-import { getData, getCurrentWeek } from "/@/api/president/teacherScore"
+import { getData, getOption } from "/@/api/president/history/check"
 
 export default {
   components: { swiperTable },
   setup() {
     const state = reactive({
-      weekOption: [
-        {
-          text: '总积分', value: 0
-        }
-      ],
+      subjectOption: [],
       searchValue:  {
         pindex: 0,
         number: 10,
-        keyword: '',
-        week: 0,
+        subject: 0,
       },
       currentPage: 1,
       count: 0,
       headData: [
-        { text: '排名', value: 'rank'},
-        { text: '老师', value: 'name' },
-        { text: '总积分', value: 'totalScores' },
-        { text: '关注率', value: 'attentionRate' },
-        { text: '任课班级', value: 'classesName', width: '200px'},
+        { text: '年级班级', value: 'rank'},
+        { text: '申请人', value: 'name' },
+        { text: '申请内容', value: 'totalScores' },
+        { text: '分 数', value: 'attentionRate' },
+        { text: '申请时间', value: 'classesName', width: '200px'},
+        { text: '周 次', value: 'classesName', width: '200px'},
+        { text: '审核人', value: 'classesName', width: '200px'},
+        { text: '审核时间', value: 'classesName', width: '200px'},
+        { text: '结 果', value: 'classesName', width: '200px'},
       ],
       tableData: [],
       isLoading: false,
@@ -81,15 +72,22 @@ export default {
     })
 
     onMounted(() => {
-      getMyData()
-      getCurrentWeek(store.state.schoolId).then((res) => {
-        store.commit('setCurrentWeek', res)
-        sessionStorage.setItem("currentWeek", res);
-        for (let i = 1; i <= res; i++) {
-          const str = `第${i}周`
-          state.weekOption.push({ text: str, value: i })
-        }
-      })
+      const promise1 = new Promise((resolve, reject) => {
+        getOption().then((res) => {
+          res.result.data.forEach((item) => {
+              state.subjectOption.push({
+                text: item,
+                value: item,
+              });
+          });
+          state.searchValue.subject = state.subjectOption[0].value
+          resolve()
+        });
+      });
+
+      promise1.then(() => {
+        getMyData();
+      });
     })
 
     return {

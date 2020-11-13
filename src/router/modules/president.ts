@@ -15,6 +15,10 @@ const presidentRoutes = [
       {
         path: 'familyScore',
         component: () => import('/@/views/president/familyScore.vue'),
+      },
+      {
+        path: 'history',
+        component: () => import('/@/views/president/history/index.vue'),
       }
     ]
   },

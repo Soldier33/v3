@@ -1,24 +1,35 @@
 <template>
-  <div class="topNav_all">
+  <div v-if="props.tableData.length" class="topNav_all">
     <div class="topNav_left">
       <div class="topNav_title">
         <span class="fix-active" :style="titleClass">{{ firstHead.text }}</span>
       </div>
-      <div v-for="item of data" :key="item" class="topNav_title">
+      <div v-for="item of data" class="topNav_title">
         <span class="fix-active" :style="titleClass">{{ item[firstHead.value] }}</span>
       </div>
     </div>
     <ul id="topNav" class="swiper-container">
       <li class="swiper-wrapper">
-        <div class="swiper-slide" :style="{ 'width': item.width ? item.width : '100px'}" v-for="item of otherHead" :key="item.text"><span>{{ item.text }}</span></div>
+        <div 
+          :class="['swiper-slide',item.width ? 'default-'+item.width : 'default-100px']"
+          v-for="(item, index) in otherHead"
+          :key="item.text"
+        ><span>{{ item.text }}</span></div>
       </li>
 
       <template v-for="itemTable of data" :key='itemTable'>
         <li class="swiper-wrapper">
-          <div class="swiper-slide1" :style="{ 'width': item.width ? item.width : '100px'}" v-for="item of otherHead" :key="item.text"><span> {{ itemTable[item.value] }}</span></div>
+          <div class="swiper-slide1"
+            v-for="item of otherHead"
+            :style="{ width: item.width ? item.width : '100px '}"
+            :key="item.text"><span> {{ itemTable[item.value] }}</span></div>
         </li>
       </template>
     </ul>
+  </div>
+
+  <div class="no-message" v-else>
+      <van-empty description="没能找到符合的数据！" />
   </div>
 </template>
 <script lang="ts">
@@ -32,21 +43,21 @@ export default {
   },
   setup(props) {
     const state = reactive({
-      swiper: null
+      swiper: null,
     })
 
     const print = (() => {
       nextTick(() => {
         if (state.swiper) {
-          state.swiper.destroy()
+          state.swiper.destroy(false)
         }
-        state.swiper = new Swiper('#topNav', {
+          state.swiper = new Swiper('#topNav', {
             freeMode: true,
             slidesPerView: 'auto',
             resistanceRatio: 0,
             observer:true,
             observeParents:true,
-        })      
+        })
       })
     })
 
@@ -69,7 +80,7 @@ export default {
       }
     })
 
-    watch(props.tableData, (val) => {
+    watch(props.tableData, (val) => { 
       return val
     })
 
@@ -123,20 +134,22 @@ export default {
     .swiper-wrapper{
       .swiper-slide {
         padding: 0 5px;
-        // min-width:  0px;
+        // width:  100px;
         height: 35px;
         line-height: 35px;
-        text-align:center;
+        text-align: center;
         border-top: 1px solid #ccc;
         background: white;
+        white-space:nowrap;       /* 使文本不可换行 */
+        overflow:hidden;          /* 隐藏溢出部分 */ 
+        text-overflow:ellipsis;   /* 显示省略符号来代表被隐藏的文本 */
         span{
           transition:width .3s ease;
-          // display:block;
         }
       }
       .swiper-slide1 {
         padding: 0 5px;
-        text-align:center;
+        text-align: center;
         height: 35px;
         line-height: 35px;
         flex-shrink: 0;
@@ -150,5 +163,11 @@ export default {
       }
     }
   }
+}
+.default-100px{
+  width:100px
+}
+.default-200px{
+  width: 200px;
 }
 </style>

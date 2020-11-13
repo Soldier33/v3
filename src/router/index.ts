@@ -32,6 +32,7 @@ const router = createRouter({
 })
 
 router.beforeEach((to, from, next) => {
+  // 获取角色
   if (store.state.role) {
     next()
   } else {
@@ -45,6 +46,11 @@ router.beforeEach((to, from, next) => {
         schoolId: sessionStorage.getItem("schoolId"),
       }
       store.commit('setMsg', user)
+      // 获取周次
+      const currentWeek = sessionStorage.getItem("currentWeek")
+      if (currentWeek) {
+        store.commit('setCurrentWeek', currentWeek)
+      }
       next()
     }
   }

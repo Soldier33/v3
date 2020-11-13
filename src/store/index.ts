@@ -6,6 +6,7 @@ export default createStore({
     school: '',
     role: '',
     schoolId: '',
+    currentWeek: 0
   },
   mutations: {
     setMsg(state, payload) {
@@ -13,6 +14,9 @@ export default createStore({
       state.school = payload.school,
       state.schoolId = payload.schoolId,
       state.role = payload.role
+    },
+    setCurrentWeek(state, payload) {
+      state.currentWeek = payload
     }
   },
   actions: {},
