@@ -17,22 +17,6 @@
       :options="state.subjectOption"
     />
   </van-dropdown-menu>
-  <xtable full-bordered style="background-color:#fff;">
-    <thead>
-      <tr>
-        <th v-for="item of state.headData">{{ item }}</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr v-for="item of state.bodyData">
-        <td><van-checkbox v-model="state.checked"></van-checkbox></td>
-        <td>{{ item.id }}</td>
-        <td>{{ item.name }}</td>
-        <td>{{ item.weeklyScore }}</td>
-        <td>{{ item.totalScore }}</td>
-      </tr>
-    </tbody>
-  </xtable>
   <van-checkbox-group v-model="state.eva">
     <van-checkbox v-for="item of state.evaData" :name="item.templateId">{{ item.content }}</van-checkbox>
   </van-checkbox-group>
@@ -47,9 +31,7 @@ import { createApp, reactive, computed, onMounted, nextTick } from "vue";
 import { useRouter } from "vue-router";
 import { getOption, getTest, getSubject, getStu, getEvaluate } from "/@/api/teacher/evaluate";
 import { Notify } from "vant";
-import xtable from "/@/components/xtable.vue";
 export default {
-  components: { xtable },
   setup(props, context) {
     const state = reactive({
       checkGrade: "",

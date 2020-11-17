@@ -70,16 +70,15 @@ export default {
     const table = ref(null);
 
     const getMyData = () => {
-      state.searchValue.pindex = state.currentPage - 1;
       state.isLoading = true;
       getData(state.searchValue).then((res) => {
-        state.count = Math.ceil(res.result.totalnum / 10);
         res.result.data.forEach((item, index) => {
           item['id'] = index + 1
         })
         state.tableData = res.result.data
-        state.isLoading = false;
-        table.value.print();
+        state.isLoading = false
+        if (res.result.data.length) 
+          table.value.print()
       });
     };
 

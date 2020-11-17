@@ -72,7 +72,8 @@ export default {
         state.count = Math.ceil(res.result.totalnum / 10)
         state.tableData = res.result.data
         state.isLoading = false
-        table.value.print()
+        if (res.result.data.length) 
+          table.value.print()
       })
     })
 

@@ -1,11 +1,4 @@
 <template>
-  <!-- <div class="search">
-    <van-search
-      v-model="state.searchValue.keyword"
-      placeholder="请输入学生姓名"
-      @search="getMyData"
-    />
-  </div> -->
   <div class="week">
     <van-dropdown-menu active-color="#1989fa">
       <van-dropdown-item
@@ -16,14 +9,17 @@
       <van-dropdown-item
         v-model="state.searchValue.classId"
         :options="state.classOption"
+        @change="changeOption"
       />
       <van-dropdown-item
-        v-model="state.searchValue.type"
-        :options="state.typeOption"
+        v-model="state.searchValue.week"
+        :options="state.weekOption"
+        @change="changeOption"
       />
     </van-dropdown-menu>
   </div>
-  <swiper-table  v-show="!state.isLoading"
+  <swiper-table
+    v-show="!state.isLoading"
     :headData="state.headData"
     :tableData="state.tableData"
     ref="table"
@@ -34,14 +30,15 @@
   <van-pagination
     v-model="state.currentPage"
     :page-count="state.count"
-    mode="simple" 
-    @change="getMyData"/>
+    mode="simple"
+    @change="getMyData"
+  />
 </template>
 <script lang="ts">
 import { createApp, reactive, computed, onMounted, nextTick, ref } from "vue";
 import store from "/@/store";
 import swiperTable from "/@/components/swiperTable.vue";
-import { getData, getOption } from "/@/api/president/history/informs";
+import { getData, getOption } from "/@/api/president/statistics/art";
 
 export default {
   components: { swiperTable },
@@ -51,28 +48,19 @@ export default {
       gradeOption: [],
       classOption: [],
       tempOption: [],
-      typeOption: [
-        { text: '通知', value: 0 },
-        { text: '特殊奖励', value: 1 },
-        { text: '特殊惩罚', value: 2 },
-      ],
+      weekOption: [],
       searchValue: {
         pindex: 0,
         number: 10,
         keyword: "",
         classId: "",
-        type: 0,
-        week: store.state.currentWeek
+        week: 0,
       },
       count: 0,
       currentPage: 1,
       headData: [
-        { text: "学生", value: "studentNames" },
-        { text: "发送人", value: "teacherName" },
-        { text: "通知内容", value: "message" },
-        { text: "发送时间", value: "schoolScores" },
-        // { text: "已读 / 发送人数", value: "parentScores" },
-        // { text: "操作", value: "studentScores" },
+        { text: "学号", value: "id", index: -1 },
+        { text: "姓名", value: "name", index: -1 },
       ],
       tableData: [],
       isLoading: false,
@@ -80,35 +68,55 @@ export default {
 
     const table = ref(null);
 
-    const getMyData = (() => {
-      state.searchValue.pindex = state.currentPage - 1
-      state.isLoading = true
+    const getMyData = () => {
+      state.searchValue.pindex = state.currentPage - 1;
+      state.isLoading = true;
       getData(state.searchValue).then((res) => {
         state.count = Math.ceil(res.result.totalnum / 10)
-        state.tableData = res.result.data
-        state.isLoading = false
-        if (res.result.data.length) 
+        // const res.result 
+        res.result = res.result.data[0]
+        if (res.result.items && res.result.items.length && res.result.cols)  {
+          res.result.cols.forEach((item, index) => {
+            state.headData.push({ text: item, value: 'scores', index: index })
+          })
+          state.tableData = res.result.items;
           table.value.print()
-      })
-    })
-    const changeGrade = ((value) => {
-      const target = state.tempOption.find((item) => { return item.id === value })
-      state.classOption = []
+        }
+        state.isLoading = false;
+      });
+    }
+
+    const changeGrade = (value) => {
+      const target = state.tempOption.find((item) => {
+        return item.id === value;
+      });
+      state.classOption = [];
       if (!target) {
-        state.searchValue.classId = ''
-        getMyData()
-        return
+        state.searchValue.classId = "";
+        getMyData();
+        return;
       }
       target.data.forEach((item) => {
-        state.classOption.push({ text: item.className, value: item.classId })
-      })
+        state.classOption.push({ text: item.className, value: item.classId });
+      });
       if (state.gradeOption.length) {
         state.searchValue.classId = state.classOption[0].value;
       }
-      getMyData()
-    })
+      getMyData();
+    }
+
+    const changeOption = (value) => {
+      getMyData();
+    };
 
     onMounted(() => {
+      for (let i = 1; i <= store.state.currentWeek; i++) {
+        const str = `第${i}周`;
+        state.weekOption.push({ text: str, value: i });
+      }
+      state.searchValue.week =
+        state.weekOption[state.weekOption.length - 1].value;
+
       const promise1 = new Promise((resolve, reject) => {
         getOption().then((res) => {
           // 改变格式
@@ -163,26 +171,27 @@ export default {
       state,
       getMyData,
       table,
-      changeGrade
+      changeGrade,
+      changeOption
     };
   },
 };
 </script>
 <style lang="scss" scoped>
-  // ::v-deep .van-dropdown-menu__bar {
-  //   box-shadow: none;
-  //   height: 30px;
-  // }
+// ::v-deep .van-dropdown-menu__bar {
+//   box-shadow: none;
+//   height: 30px;
+// }
 
-  ::v-deep .van-ellipsis {
-    color: #1989fa;
-  }
+::v-deep .van-ellipsis {
+  color: #1989fa;
+}
 
-  .loading{
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin-top: 30px;
-    margin-bottom: 30px;
-  }
+.loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 30px;
+  margin-bottom: 30px;
+}
 </style>

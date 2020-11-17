@@ -20,9 +20,9 @@
       <template v-for="itemTable of data" :key='itemTable'>
         <li class="swiper-wrapper">
           <div class="swiper-slide1"
-            v-for="item of otherHead"
+            v-for="(item, index) in otherHead"
             :style="{ width: item.width ? item.width : '100px '}"
-            :key="item.text"><span> {{ itemTable[item.value] }}</span></div>
+            :key="item.text"><span> {{ itemTable[item.value] instanceof Array ? itemTable[item.value][item.index] : itemTable[item.value] }}</span></div>
         </li>
       </template>
     </ul>

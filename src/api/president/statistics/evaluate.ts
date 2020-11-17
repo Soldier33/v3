@@ -2,11 +2,12 @@ import request from '/@/utils/request'
 
 export function getData(data) {
   return request({
+    url: `/api/integral-statictis/class/${data.classId}/week/${data.week}`,
     method: 'get',
-    url: `/api/honor/weekly/class/${data.classId}/week/${data.week}/type/${data.type}`,
     params: {
         pindex: data.pindex,
         number: data.number,
+        target: "integral",
     }
   })
 }
@@ -17,12 +18,3 @@ export function getOption() {
       method: 'get',
     })
 }
-
-export function getTypeOption() {
-    return request({
-      url: '/api/honor/content',
-      method: 'get',
-    })
-}
-
-// https://qcpj.bnuz.edu.cn
