@@ -33,7 +33,7 @@ export default {
           {text: "历史情况", value: '/page/pc/s/history'},
           {text: "统计情况", value: '/page/pc/s/statistics'},
           {text: "排行榜", value: '/page/pc/s/rank'},
-          {text: "基础数据", value: '/w'},
+          {text: "基础数据", value: '/page/pc/s/data'},
           {text: "期末评语", value: '/w'},
         ],
         admin: [

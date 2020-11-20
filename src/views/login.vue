@@ -241,7 +241,7 @@ export default {
       if (state.user.password && state.user.username) {
         state.isRem = true
       }
-      if (state.user.provinceId && state.user.cityId && state.user.schoolId) {
+      if (state.user.provinceId && state.user.cityId && state.user.schoolId && state.user.cityId !== 'undefined') {
         getMyProvince()
         getMyCity()
         getMySchool()

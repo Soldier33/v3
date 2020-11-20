@@ -22,6 +22,8 @@ service.interceptors.response.use(
         location.href = '/'
       }, 2000)
       // return Promise.reject(new Error(res.msg || 'Error'))
+    } else if (res.code === 400) {
+      Notify({ type: 'danger', message: res.detail })
     } else {
       return res
     }
