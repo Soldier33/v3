@@ -3,7 +3,7 @@
     <van-search
       v-model="state.searchValue.keyword"
       placeholder="请输入学生姓名"
-      @search="getMyData"
+      @search="changeOption"
     />
   </div>
   <div class="week">
@@ -16,6 +16,7 @@
       <van-dropdown-item
         v-model="state.searchValue.classId"
         :options="state.classOption"
+        @change="changeOption"
       />
     </van-dropdown-menu>
   </div>
@@ -131,8 +132,14 @@ export default {
       if (state.gradeOption.length) {
         state.searchValue.classId = state.classOption[0].value;
       }
+      state.currentPage = 1
       getMyData()
     })
+
+    const changeOption = () => {
+      state.currentPage = 1
+      getMyData()
+    }
 
     onMounted(() => {
       getMyData()
@@ -143,7 +150,8 @@ export default {
       state,
       getMyData,
       table,
-      changeGrade
+      changeGrade,
+      changeOption
     };
   },
 };

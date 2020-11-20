@@ -2,19 +2,34 @@ import request from '/@/utils/request'
 
 export function getData(data) {
   return request({
-    url: `/api/integral-statictis/class/${data.classId}/week/${data.week}`,
+    url: `/api/content/template/${data.species}/${data.type}`,
     method: 'get',
     params: {
-        pindex: data.pindex,
-        number: data.number,
-        target: "integral",
+        grade: data.grade,
+        target: data.target,
     }
   })
 }
 
 export function getGradeOption() {
     return request({
-      url: '/class/grade/all',
+      url: '/api/class/all',
       method: 'get',
     })
+}
+
+export function getTypeOption() {
+  return request({
+    url: '/api/content/type',
+    method: 'get',
+  })
+}
+
+
+
+export function getSubjectOption() {
+  return request({
+    url: '/api/content/subject',
+    method: 'get',
+  })
 }

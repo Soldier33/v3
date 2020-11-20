@@ -1,73 +1,73 @@
 <template>
-  <div>
-
-    <van-dropdown-menu active-color="#1989fa">
-      <van-dropdown-item
-        v-model="state.checkEva"
-        :options="state.evaOption"
-        @change="changeOption"
-      />
-      <van-dropdown-item
-        v-model="state.searchValue.week"
-        :options="state.weekOption"
-        @change="changeOption"
-      />
-    </van-dropdown-menu>
-    <van-dropdown-menu active-color="#1989fa">
-      <van-dropdown-item
-        v-model="state.checkGrade"
-        :options="state.gradeOption"
-        @change="changeGrade"
-      />
-      <van-dropdown-item
-        v-model="state.checkGrade"
-        :options="state.gradeOption"
-        @change="changeGrade"
-      />
-    </van-dropdown-menu>
-    <swiper-table
-      v-show="!state.isLoading"
-      :headData="state.headData"
-      :tableData="state.tableData"
-      ref="table"
-    ></swiper-table>
-    <div v-show="state.isLoading" class="loading">
-      <van-loading type="spinner" color="#1989fa" />
-    </div>
+  <van-dropdown-menu active-color="#1989fa">
+    <van-dropdown-item
+      v-model="state.searchValue.target"
+      :options="state.targetOption"
+      @change="getMyData"
+    />
+    <van-dropdown-item
+      v-model="state.searchValue.species"
+      :options="state.speciesOption"
+      @change="changeTypeOption"
+    />
+  </van-dropdown-menu>
+  <van-dropdown-menu active-color="#1989fa">
+    <van-dropdown-item
+      v-model="state.searchValue.type"
+      :options="state.typeOption"
+      @change="getMyData"
+    />
+    <van-dropdown-item
+      v-model="state.searchValue.grade"
+      :options="state.gradeOption"
+      @change="getMyData"
+    />
+  </van-dropdown-menu>
+  <swiper-table
+    v-show="!state.isLoading"
+    :headData="state.headData"
+    :tableData="state.tableData"
+    ref="table"
+  ></swiper-table>
+  <div v-show="state.isLoading" class="loading">
+    <van-loading type="spinner" color="#1989fa" />
   </div>
 </template>
 <script lang="ts">
 import { createApp, reactive, computed, onMounted, nextTick, ref } from "vue";
 import store from "/@/store";
 import swiperTable from "/@/components/swiperTable.vue";
-import { getData, getGradeOption } from "/@/api/president/data/evaluate";
+import { getData, getGradeOption, getTypeOption, getSubjectOption } from "/@/api/president/data/evaluate";
 
 export default {
   components: { swiperTable },
   setup() {
     const state = reactive({
-      checkGrade: "",
-      checkEva: "1",
-      gradeOption: [],
-      evaOption: [
+      targetOption: [
         { text: "学校评价", value: "1" },
         { text: "家庭评价", value: "2" },
         { text: "学生评价", value: "3" },
         { text: "自主评价", value: "4" },
       ],
+      speciesOption: [
+        { text: "素养", value: "type" },
+        { text: "科目", value: "subject" },
+      ],
+      gradeOption: [
+        { text: "全校公共", value: "0" },
+      ],
+      typeOption: [],
       tempOption: [],
-      weekOption: [],
       searchValue: {
-        pindex: 0,
-        number: 10,
-        keyword: "",
-        classId: "",
-        week: 0,
+        target: "1",
+        species: "type",
+        type: "type",
+        grade: "0",
       },
       headData: [
         { text: "序号", value: "templateId" },
-        { text: "评价内容", value: "content" },
         { text: "分数", value: "scores" },
+        { text: "评价内容", value: "content", width: '200px' },
       ],
       tableData: [],
       isLoading: false,
@@ -86,7 +86,31 @@ export default {
 
     const getMyGradeOption = () => {
       getGradeOption().then((res) => {
-
+        // 改变格式
+          var map = {};
+          for (let i = 0; i < res.result.data.length; i++) {
+            const ai = res.result.data[i];
+            if (!map[ai.gradeId]) {
+              state.tempOption.push({
+                id: ai.gradeId,
+                name: ai.gradeName,
+                data: [ai],
+              });
+              map[ai.gradeId] = ai;
+            } else {
+              for (let j = 0; j < state.tempOption.length; j++) {
+                const dj = state.tempOption[j];
+                if (dj.id == ai.gradeId) {
+                  dj.data.push(ai);
+                  break;
+                }
+              }
+            }
+          }
+          // 展示
+          state.tempOption.forEach((item) => {
+            state.gradeOption.push({ text: item.name, value: item.id });
+          });
       });
     }
 
@@ -94,12 +118,43 @@ export default {
       getMyData();
     };
 
-    const changeOption = (value) => {
-      getMyData();
+    const changeTypeOption = (value) => {
+      const promise1 = new Promise((resolve, reject) => {
+        if (value === 'type') {
+          getTypeOption().then(res => {
+            const data = res.result.data
+            if (data.length) {
+              state.typeOption = []
+              data.forEach((item) => {
+                state.typeOption.push({text: item.name, value: item.id})
+              })
+              state.searchValue.type = state.typeOption[0].value
+            }
+            resolve()
+          })
+        } else {
+          getSubjectOption().then(res => {
+            const data = res.result.data
+            if (data.length) {
+              state.typeOption = []
+              data.forEach((item) => {
+                state.typeOption.push({text: item, value: item})
+              })
+              state.searchValue.type = state.typeOption[0].value
+            }
+            resolve()
+          })
+        }
+      });
+
+      promise1.then(() => {
+        getMyData()
+      });
     };
 
     onMounted(() => {
-      getMyData();
+      changeTypeOption('type')
+      getMyGradeOption()
     });
 
     return {
@@ -107,7 +162,7 @@ export default {
       getMyData,
       table,
       changeGrade,
-      changeOption,
+      changeTypeOption,
     };
   },
 };

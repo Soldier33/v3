@@ -85,6 +85,7 @@ export default {
     }
 
     const changeOption = (value) => {
+      state.currentPage = 1
       getMyData();
     };
 

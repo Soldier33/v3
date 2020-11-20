@@ -69,6 +69,7 @@ export default {
     })
 
     const changeWeek = ((value) => {
+      state.currentPage = 1
       getMyData()
     })
 

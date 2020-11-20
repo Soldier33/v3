@@ -99,10 +99,12 @@ export default {
       if (state.gradeOption.length) {
         state.searchValue.classId = state.classOption[0].value;
       }
+      state.currentPage = 1
       getMyData();
     };
 
     const changeOption = (value) => {
+      state.currentPage = 1
       getMyData();
     };
 

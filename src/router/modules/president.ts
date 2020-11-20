@@ -31,7 +31,7 @@ const presidentRoutes = [
       {
         path: 'data',
         component: () => import('/@/views/president/data/index.vue'),
-      }
+      },
     ]
   },
   

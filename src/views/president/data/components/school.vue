@@ -10,7 +10,7 @@
     name="开学日期"
     label="开学日期"
     placeholder="请选择日期"
-      @click="state.showCalendar = true"
+    @click="state.showCalendar = true"
   />
   <van-field
     v-model="state.msg.tip"
@@ -20,7 +20,7 @@
     type="textarea"
     placeholder="请输入温馨提示"
   />
-  <van-calendar v-model:show="state.showCalendar" @confirm="onConfirm"/>
+  <van-calendar v-model:show="state.showCalendar" @confirm="onConfirm" :min-date="state.minDate"/>
   <div style="margin: 16px;">
     <van-button
       block
@@ -43,6 +43,7 @@ export default {
     const state = reactive({
       isLoading: false,
       showCalendar: false,
+      minDate: new Date(2020, 0, 1),
       msg: {
         date: '',
         school: '',

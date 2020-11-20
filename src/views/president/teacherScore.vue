@@ -3,7 +3,7 @@
     <van-search
     v-model="state.searchValue.keyword"
     placeholder="请输入老师姓名"
-    @search="getMyData" />
+    @search="changeWeek" />
   </div>
   <div class="week">
     <van-dropdown-menu active-color="#1989fa">
@@ -78,6 +78,7 @@ export default {
     })
 
     const changeWeek = ((value) => {
+      state.currentPage = 1
       getMyData()
     })
 

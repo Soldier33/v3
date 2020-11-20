@@ -17,12 +17,14 @@
         ><span>{{ item.text }}</span></div>
       </li>
 
-      <template v-for="itemTable of data" :key='itemTable'>
-        <li class="swiper-wrapper">
+      <template  v-for="itemTable of data" :key='itemTable'>
+        <li class="swiper-wrapper" >
           <div class="swiper-slide1"
             v-for="(item, index) in otherHead"
             :style="{ width: item.width ? item.width : '100px '}"
-            :key="item.text"><span> {{ itemTable[item.value] instanceof Array ? itemTable[item.value][item.index] : itemTable[item.value] }}</span></div>
+            :key="item.text">
+            <span @click="clickText(itemTable[item.value])"> {{ itemTable[item.value] instanceof Array ? itemTable[item.value][item.index] : itemTable[item.value] }}</span>
+          </div>
         </li>
       </template>
     </ul>
@@ -36,6 +38,8 @@
 import { createApp, watch, reactive, computed, onMounted, nextTick } from "vue";
 import Swiper from 'swiper'
 import 'swiper/css/swiper.css'
+import { Toast } from 'vant';
+
 export default {
   props: {
     headData: Array,
@@ -51,12 +55,12 @@ export default {
         if (state.swiper) {
           state.swiper.destroy(false)
         }
-          state.swiper = new Swiper('#topNav', {
-            freeMode: true,
-            slidesPerView: 'auto',
-            resistanceRatio: 0,
-            observer:true,
-            observeParents:true,
+        state.swiper = new Swiper('#topNav', {
+          freeMode: true,
+          slidesPerView: 'auto',
+          resistanceRatio: 0,
+          observer:true,
+          observeParents:true,
         })
       })
     })
@@ -84,6 +88,10 @@ export default {
       return val
     })
 
+    const clickText = ((value)=> {
+      Toast(value);
+    })
+
     return {
       state,
       props,
@@ -92,6 +100,7 @@ export default {
       data,
       print,
       titleClass,
+      clickText
     }
   },
 };

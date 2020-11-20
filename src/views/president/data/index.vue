@@ -1,6 +1,6 @@
 <template>
   <van-tabs @click="tabClick" color="#1989fa">
-    <van-tab v-for="(item, index) in state.title" :title="item.text" :name="index">
+    <van-tab v-for="(item, index) in state.title" :title="item.text" :name="index" :key="item.title">
     </van-tab>
   </van-tabs>
   <school v-if="state.active === 0" />

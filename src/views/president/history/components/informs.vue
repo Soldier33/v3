@@ -16,10 +16,12 @@
       <van-dropdown-item
         v-model="state.searchValue.classId"
         :options="state.classOption"
+        @change="changeOption"
       />
       <van-dropdown-item
         v-model="state.searchValue.type"
         :options="state.typeOption"
+        @change="changeOption"
       />
     </van-dropdown-menu>
   </div>
@@ -91,6 +93,12 @@ export default {
           table.value.print()
       })
     })
+
+    const changeOption = ((value) => {
+      state.currentPage = 1
+      getMyData()
+    }) 
+
     const changeGrade = ((value) => {
       const target = state.tempOption.find((item) => { return item.id === value })
       state.classOption = []
@@ -105,6 +113,7 @@ export default {
       if (state.gradeOption.length) {
         state.searchValue.classId = state.classOption[0].value;
       }
+      state.currentPage = 1
       getMyData()
     })
 
@@ -163,7 +172,8 @@ export default {
       state,
       getMyData,
       table,
-      changeGrade
+      changeGrade,
+      changeOption
     };
   },
 };
