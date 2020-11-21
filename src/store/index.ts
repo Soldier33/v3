@@ -16,7 +16,6 @@ export default createStore({
       state.role = payload.role
     },
     setCurrentWeek(state, payload) {
-      console.log(payload);
       if (payload === -1)
       payload = 1
       state.currentWeek = payload

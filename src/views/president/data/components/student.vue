@@ -1,50 +1,36 @@
 <template>
-  <div class="week">
-    <van-dropdown-menu active-color="#1989fa">
-      <van-dropdown-item
-        v-model="state.checkGrade"
-        :options="state.gradeOption"
-        @change="changeGrade"
-      />
-      <van-dropdown-item
-        v-model="state.searchValue.classId"
-        :options="state.classOption"
-      />
-    </van-dropdown-menu>
-    <van-dropdown-menu active-color="#1989fa">
-      <van-dropdown-item
-        v-model="state.searchValue.week"
-        :options="state.weekOption"
-        @change="changeValue"
-      />
-      <van-dropdown-item
-        v-model="state.searchValue.type"
-        :options="state.typeOption"
-        @change="changeValue"
-      />
-    </van-dropdown-menu>
-  </div>
-  <swiper-table
-    v-show="!state.isLoading"
+  <van-dropdown-menu active-color="#1989fa">
+    <van-dropdown-item
+      v-model="state.checkGrade"
+      :options="state.gradeOption"
+      @change="changeGrade"
+    />
+    <van-dropdown-item
+      v-model="state.searchValue.classId"
+      :options="state.classOption"
+      @change="changeOption"
+    />
+  </van-dropdown-menu>
+  <swiper-table  v-show="!state.isLoading"
     :headData="state.headData"
+    :headProps="state.headProps"
     :tableData="state.tableData"
     ref="table"
   ></swiper-table>
-  <van-pagination
-    v-model="state.currentPage"
-    :page-count="state.count"
-    mode="simple"
-    @change="getMyData"
-  />
   <div v-show="state.isLoading" class="loading">
     <van-loading type="spinner" color="#1989fa" />
   </div>
+  <van-pagination
+    v-model="state.currentPage"
+    :page-count="state.count"
+    mode="simple" 
+    @change="getMyData"/>
 </template>
 <script lang="ts">
 import { createApp, reactive, computed, onMounted, nextTick, ref } from "vue";
 import store from "/@/store";
 import swiperTable from "/@/components/swiperTable.vue";
-import { getData, getOption, getTypeOption } from "/@/api/president/rank";
+import { getData, getOption } from "/@/api/president/data/student";
 
 export default {
   components: { swiperTable },
@@ -54,74 +40,64 @@ export default {
       gradeOption: [],
       classOption: [],
       tempOption: [],
-      weekOption: [],
-      typeOption: [],
       searchValue: {
         pindex: 0,
         number: 10,
         keyword: "",
         classId: "",
-        week: 0,
-        type: 0,
       },
+      count: 0,
+      currentPage: 1,
       headData: [
-        { text: "名次", value: "id", width: '76px' },
-        { text: "姓名", value: "name", width: '150px' },
-        { text: "本周得分", value: "scores", width: '150px' },
+        { text: "学号", value: "id" },
+        { text: "学生姓名", value: "name" },
+        { text: "性别", value: "sex" },
+        { text: "家长姓名", value: "family" },
+        { text: "家长电话", value: "familyPhone" },
+        { text: "身份证后六位", value: "idcard" },
       ],
       tableData: [],
       isLoading: false,
-      currentPage: 1,
-      count: 0,
     });
 
     const table = ref(null);
 
-    const getMyData = () => {
-      state.isLoading = true;
+    const getMyData = (() => {
+      state.searchValue.pindex = state.currentPage - 1
+      state.isLoading = true
       getData(state.searchValue).then((res) => {
-        res.result.data.forEach((item, index) => {
-          item['id'] = index + 1
-        })
         state.count = Math.ceil(res.result.totalnum / 10)
-        state.tableData = res.result.data.slice((state.currentPage - 1) * 10, state.currentPage * 10);
+        state.tableData = res.result.data
         state.isLoading = false
         if (res.result.data.length) 
           table.value.print()
-      });
-    };
+      })
+    })
 
-    const changeGrade = (value) => {
-      const target = state.tempOption.find((item) => {
-        return item.id === value;
-      });
-      state.classOption = [];
+    const changeGrade = ((value) => {
+      const target = state.tempOption.find((item) => { return item.id === value })
+      state.classOption = []
       if (!target) {
-        state.searchValue.classId = "";
-        getMyData();
-        return;
+        state.searchValue.classId = ''
+        getMyData()
+        return
       }
       target.data.forEach((item) => {
-        state.classOption.push({ text: item.className, value: item.classId });
-      });
+        state.classOption.push({ text: item.className, value: item.classId })
+      })
       if (state.gradeOption.length) {
         state.searchValue.classId = state.classOption[0].value;
       }
-      getMyData();
-    };
+      state.currentPage = 1
+      getMyData()
+    })
 
-    const changeValue = (value) => {
-      getMyData();
-    };
+    const changeOption = () => {
+      state.currentPage = 1
+      getMyData()
+    }
 
     onMounted(() => {
-      for (let i = 1; i <= store.state.currentWeek; i++) {
-        const str = `第${i}周`;
-        state.weekOption.push({ text: str, value: i });
-      }
-      state.searchValue.week =
-        state.weekOption[state.weekOption.length - 1].value;
-
       const promise1 = new Promise((resolve, reject) => {
         getOption().then((res) => {
           // 改变格式
@@ -163,21 +139,12 @@ export default {
               state.searchValue.classId = state.classOption[0].value;
             }
           }
-          getTypeOption().then((res) => {
-            res.result.data.forEach((item) => {
-              state.typeOption.push({
-                text: item.title,
-                value: item.id,
-              });
-            })
-            state.searchValue.type = state.typeOption[0].value;
-            resolve()
-          })
+          resolve()
         });
-      })
+      });
 
       promise1.then(() => {
-        getMyData()
+        getMyData();
       });
     });
 
@@ -186,26 +153,26 @@ export default {
       getMyData,
       table,
       changeGrade,
-      changeValue,
+      changeOption
     };
   },
 };
 </script>
 <style lang="scss" scoped>
-::v-deep .van-dropdown-menu__bar {
-  box-shadow: none;
-  height: 30px;
-}
+  // ::v-deep .van-dropdown-menu__bar {
+  //   box-shadow: none;
+  //   height: 30px;
+  // }
 
-::v-deep .van-ellipsis {
-  color: #1989fa;
-}
+  ::v-deep .van-ellipsis {
+    color: #1989fa;
+  }
 
-.loading {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-top: 30px;
-  margin-bottom: 30px;
-}
+  .loading{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 30px;
+    margin-bottom: 30px;
+  }
 </style>

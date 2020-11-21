@@ -29,6 +29,11 @@
     :tableData="state.tableData"
     ref="table"
   ></swiper-table>
+  <van-pagination
+    v-model="state.currentPage"
+    :page-count="state.count"
+    mode="simple" 
+    @change="getMyData"/>
   <div v-show="state.isLoading" class="loading">
     <van-loading type="spinner" color="#1989fa" />
   </div>
@@ -71,6 +76,8 @@ export default {
       ],
       tableData: [],
       isLoading: false,
+      currentPage: 1,
+      count: 0
     });
 
     const table = ref(null);
@@ -78,7 +85,8 @@ export default {
     const getMyData = () => {
       state.isLoading = true;
       getData(state.searchValue).then((res) => {
-        state.tableData = res.result.data;
+        state.count = Math.ceil(res.result.totalnum / 10)
+        state.tableData = res.result.data.slice((state.currentPage - 1) * 10, state.currentPage * 10);
         state.isLoading = false;
         if (res.result.data.length) table.value.print();
       });

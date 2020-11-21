@@ -4,13 +4,9 @@ import { useRouter } from 'vue-router'
 axios.defaults.withCredentials = true
 
 const service = axios.create({
-  // baseURL: 'https://qcpj.bnuz.edu.cn',
-  // baseURL: 'http://172.31.44.177/',
-  baseURL: 'http://localhost:3000',
-  // headers: {
-  //   "content-type": "application/json; charset=UTF-8",
-  // },
-  // timeout: 120000
+  // baseURL: 'https://qcpj.bnuz.edu.cn',  // 正式服
+  // baseURL: 'http://172.31.44.177/',  // 测试服
+  baseURL: 'http://localhost:3000', // 开发
 })
 
 service.interceptors.response.use(
@@ -21,7 +17,6 @@ service.interceptors.response.use(
       setTimeout(() => {
         location.href = '/'
       }, 2000)
-      // return Promise.reject(new Error(res.msg || 'Error'))
     } else if (res.code === 400) {
       Notify({ type: 'danger', message: res.detail })
     } else {
