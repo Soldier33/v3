@@ -4,7 +4,7 @@
       <div class="topNav_title">
         <span class="fix-active" :style="titleClass">{{ firstHead.text }}</span>
       </div>
-      <div v-for="item of data" class="topNav_title">
+      <div v-for="item of data" class="topNav_title" :key="item">
         <span class="fix-active" :style="titleClass">{{ item[firstHead.value] }}</span>
       </div>
     </div>
@@ -17,13 +17,16 @@
         ><span>{{ item.text }}</span></div>
       </li>
 
-      <template  v-for="itemTable of data" :key='itemTable'>
+      <template  v-for="(itemTable, dataIndex) in data" :key='itemTable'>
         <li class="swiper-wrapper" >
           <div class="swiper-slide1"
             v-for="(item, index) in otherHead"
             :style="{ width: item.width ? item.width : '100px '}"
             :key="item.text">
             <span @click="clickText(itemTable[item.value])"> {{ itemTable[item.value] instanceof Array ? itemTable[item.value][item.index] : itemTable[item.value] }}</span>
+            <van-icon @click="editItem(itemTable, dataIndex)" v-if="item.edit" name="edit" size="22" style="vertical-align: middle;"/>
+            <div class="gap" v-if="item.edit && item.delete"></div>
+            <van-icon @click="deleteItem(itemTable, dataIndex)" v-if="item.delete" name="delete" size="22" style="vertical-align: middle;"/>
           </div>
         </li>
       </template>
@@ -45,7 +48,15 @@ export default {
     headData: Array,
     tableData: Array,
   },
-  setup(props) {
+  emits: {
+    editItem: val => {
+      return true;
+    },
+    deleteItem: val => {
+      return true;
+    }
+  },
+  setup(props, context) {
     const state = reactive({
       swiper: null,
     })
@@ -92,6 +103,14 @@ export default {
       Toast(value);
     })
 
+    const editItem =  (value, index) => {
+      context.emit("editItem", value, index)
+    }
+
+    const deleteItem =  (value, index) => {
+      context.emit("deleteItem", value, index)
+    }
+
     return {
       state,
       props,
@@ -100,7 +119,9 @@ export default {
       data,
       print,
       titleClass,
-      clickText
+      clickText,
+      editItem,
+      deleteItem
     }
   },
 };
@@ -184,5 +205,9 @@ export default {
 }
 .default-150px{
   width: 150px;
+}
+.gap {
+  display: inline;
+  margin-right: 20px
 }
 </style>

@@ -66,8 +66,6 @@ export default {
     const getMyData = () => {
       state.searchValue.pindex = state.currentPage - 1;
       state.isLoading = true
-      console.log(state.searchValue);
-      
       getData(state.searchValue).then((res) => {
         state.count = Math.ceil(res.result.totalnum / 10);
         res.result = res.result.data[0]

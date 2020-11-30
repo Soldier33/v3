@@ -18,3 +18,36 @@ export function getOption() {
       method: 'get',
     })
 }
+
+export function add(data) {
+  return request({
+    url: '/api/class/add',
+    method: 'POST',
+    params: {
+      gradeId: data.gradeId,
+      cid: data.classId,
+      className: data.className,
+    }
+  })
+}
+
+export function modify(data) {
+  return request({
+    url: `/api/class/${data.classId}/modify`,
+    method: 'POST',
+    params: {
+      className: data.class,
+    }
+  })
+}
+
+
+export function delectClass(data) {
+  return request({
+    url: `/api/class/${data.classId}/delete`,
+    method: 'POST',
+    params: {
+      classId: data.classId,
+    }
+  })
+}

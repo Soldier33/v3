@@ -5,3 +5,5 @@ https://qcpj.bnuz.edu.cn/page/pc/login
 3. 广东，珠海，香洲一小，admin，admin        (PS: role = admin, 超级管理员)
 
 组件库vant: https://vant-contrib.gitee.io/vant/next/#/zh-CN/home
+
+增删改案例写在，管理员的基础数据的班级页面
