@@ -85,7 +85,6 @@
     </van-dialog>
     <!-- 删除 -->
     <van-dialog v-model:show="state.isDelectShow" :title="state.delectTitle" show-cancel-button @confirm="delectMyClass">
-      
     </van-dialog>
   </div>
 </template>
@@ -211,7 +210,8 @@ export default {
       add(state.msg).then((res) => {
         if (res.code === 200) {      
           state.tableData.unshift(
-            { gradeId: state.msg.gradeId,
+            { 
+              gradeId: state.msg.gradeId,
               gradeName: state.msg.gradeName,
               cid: state.msg.classId,
               className: state.msg.className

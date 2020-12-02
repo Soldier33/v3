@@ -34,7 +34,6 @@ export default {
           {text: "统计情况", value: '/page/pc/s/statistics'},
           {text: "排行榜", value: '/page/pc/s/rank'},
           {text: "基础数据", value: '/page/pc/s/data'},
-          // {text: "期末评语", value: '/page/pc/s/aa'},
         ],
         admin: [
           {text: "老师积分", value: '/w1'},

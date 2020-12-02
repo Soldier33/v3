@@ -197,11 +197,6 @@ export default {
       Cookies.set('schoolId', state.user.schoolId)
       Cookies.set('area', state.user.area)
       Cookies.set('school', state.user.school)
-      if(state.isAdmin) {
-        state.user.role = 'admin'
-      } else {
-        state.user.role = 'teacher'
-      }
       if(state.isRem) {
         Cookies.set('pwd', state.user.password)
         Cookies.set('user', state.user.username)
@@ -209,14 +204,17 @@ export default {
         Cookies.set('', state.user.password)
         Cookies.set('', state.user.username)
       }
+      if(state.isAdmin) {
+        state.user.role = 'admin'
+      } else {
+        state.user.role = 'teacher'
+      }
       login(state.user).then(res => {
         if (res.code === 200) {
           if (res.detail === '/page/pc/s/teacherScore') {
             state.user.role = 'president'
           }
           Notify({ type: 'success', message: '登录成功', duration: 1000 });
-          store.commit('setMsg', state.user)
-          Cookies.set('SESSION',res.sessionId)
           sessionStorage.setItem("username", state.user.username);
           sessionStorage.setItem("school", state.user.school);
           sessionStorage.setItem("role", state.user.role);
