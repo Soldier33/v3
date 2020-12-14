@@ -16,7 +16,6 @@
   </div>
   <swiper-table  v-show="!state.isLoading"
     :headData="state.headData"
-    :headProps="state.headProps"
     :tableData="state.tableData"
     ref="table"
   ></swiper-table>
