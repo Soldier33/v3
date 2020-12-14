@@ -22,7 +22,7 @@ export default {
           {text: "学生评价", value: '/w'},
           {text: "历史评价", value: '/w'},
           {text: "历史积分", value: '/w'},
-          {text: "学生信息", value: '/w'},
+          {text: "学生信息", value: '/page/pc/information'},
           {text: "评价统计", value: '/w'},
           {text: "排行榜", value: '/w'},
           {text: "期末评语", value: '/w'},

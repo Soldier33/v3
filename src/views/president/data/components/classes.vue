@@ -20,7 +20,7 @@
       <van-loading type="spinner" color="#1989fa" />
     </div>
     <van-pagination
-      v-model="state.currentPage"
+      v-model="state.currentPage" 
       :page-count="state.count"
       mode="simple" 
       @change="getMyData"/>
@@ -51,7 +51,7 @@
           @click="state.showClass = true"
         />
       </div>
-    </van-dialog>
+    </van-dialog> 
     <van-popup v-model:show="state.showGarde" position="bottom">
       <van-picker
         :columns="state.gardeColumns"
@@ -84,9 +84,7 @@
       </div>
     </van-dialog>
     <!-- 删除 -->
-    <van-dialog v-model:show="state.isDelectShow" :title="state.delectTitle" show-cancel-button @confirm="delectMyClass">
-      
-    </van-dialog>
+    <van-dialog v-model:show="state.isDelectShow" :title="state.delectTitle" show-cancel-button @confirm="delectMyClass"> </van-dialog>
   </div>
 </template>
 <script lang="ts">
@@ -122,7 +120,7 @@ export default {
       tableData: [],
       isLoading: false,
       isShow: false,
-      showGarde: false,
+      showGarde: false, 
       showClass: false,
       msg: {
         gradeName: '',
@@ -221,7 +219,7 @@ export default {
           Notify({ type: 'success', message: res.detail, duration: 1000 });         
         } else {
           Notify({ type: 'danger', message: res.detail, duration: 1000 })
-        }
+        } 
       })
     }
 

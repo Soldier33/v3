@@ -12,6 +12,10 @@ const teacherRoutes = [
         path: 'evaluate',
         component: () => import('/@/views/teacher/evaluate.vue'),
       },
+      {
+        path: 'information',
+        component: () => import('/@/views/teacher/information.vue'),
+      },
     ]
   },
   
