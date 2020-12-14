@@ -67,6 +67,7 @@
         @cancel="state.showClass = false"
       />
     </van-popup>
+    
     <!-- 编辑班级 -->
     <van-dialog v-model:show="state.isEditShow" title="班级信息" show-cancel-button @confirm="editClass">
       <div class="popbox">
@@ -84,7 +85,8 @@
       </div>
     </van-dialog>
     <!-- 删除 -->
-    <van-dialog v-model:show="state.isDelectShow" :title="state.delectTitle" show-cancel-button @confirm="delectMyClass"> </van-dialog>
+    <van-dialog v-model:show="state.isDelectShow" :title="state.delectTitle" show-cancel-button @confirm="delectMyClass">
+    </van-dialog>
   </div>
 </template>
 <script lang="ts">
@@ -209,7 +211,8 @@ export default {
       add(state.msg).then((res) => {
         if (res.code === 200) {      
           state.tableData.unshift(
-            { gradeId: state.msg.gradeId,
+            { 
+              gradeId: state.msg.gradeId,
               gradeName: state.msg.gradeName,
               cid: state.msg.classId,
               className: state.msg.className

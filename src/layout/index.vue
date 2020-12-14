@@ -19,11 +19,11 @@ export default {
     const state = reactive({
       title: {
         teacher: [
-          {text: "学生评价", value: '/w'},
+          {text: "学生评价", value: '/page/pc/evaluate'},
           {text: "历史评价", value: '/w'},
           {text: "历史积分", value: '/w'},
           {text: "学生信息", value: '/page/pc/information'},
-          {text: "评价统计", value: '/w'},
+          {text: "评价统计", value: '/page/pc/statistics'},
           {text: "排行榜", value: '/w'},
           {text: "期末评语", value: '/w'},
         ],
@@ -34,7 +34,6 @@ export default {
           {text: "统计情况", value: '/page/pc/s/statistics'},
           {text: "排行榜", value: '/page/pc/s/rank'},
           {text: "基础数据", value: '/page/pc/s/data'},
-          // {text: "期末评语", value: '/page/pc/s/aa'},
         ],
         admin: [
           {text: "老师积分", value: '/w1'},
