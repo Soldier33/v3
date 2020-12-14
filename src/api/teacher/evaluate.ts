@@ -17,23 +17,31 @@ export function getSubject(classId) {
   })
 }
 
-export function getStu(week, classId) {
+export function getData(data) {
   return request({
-    url: `/api/integral/school/week/${week}/class/${classId}`,
+    url: `/api/integral/school/week/${data.week}/class/${data.classId}`,
     method: 'get',
+    // startId=1&endId=100
+    params: {
+      startId: data.pindex,
+      endId: data.endId,
+    }
   })
 }
 
 export function getEvaluate() {
   return request({
-    url: '/api/content/template/subject/',
-    method: 'get',
+    url:'/api/teacher/evaluate',
+    method: 'get'
   })
 }
 
-export function getTest() {
+export function getCurrentWeek(schoolId) {
   return request({
-    url: '/test/gettest',
+    url: '/api/util/getCurrentWeek',
     method: 'get',
+    params: {
+      schoolId
+    }
   })
 }

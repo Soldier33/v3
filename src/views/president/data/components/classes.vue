@@ -67,6 +67,7 @@
         @cancel="state.showClass = false"
       />
     </van-popup>
+    
     <!-- 编辑班级 -->
     <van-dialog v-model:show="state.isEditShow" title="班级信息" show-cancel-button @confirm="editClass">
       <div class="popbox">

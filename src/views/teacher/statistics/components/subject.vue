@@ -1,9 +1,9 @@
 <template>
   <van-dropdown-menu>
     <van-dropdown-item
-      v-model="state.searchValue.grade"
+      v-model="state.searchValue.gradeId"
       :options="state.gradeOption"
-      @change="changeOption"
+      @change="changeGrade"
     />
     <van-dropdown-item
       v-model="state.searchValue.classId"
@@ -15,24 +15,12 @@
       :options="state.weekOption"
       @change="changeOption"
     />
-    <van-dropdown-item
-      v-model="state.searchValue.subject"
-      :options="state.subjectOption"
-      @change="changeOption"
-    />
-  </van-dropdown-menu>
-  <swiper-table  v-show="!state.isLoading"
+    <swiper-table  v-show="!state.isLoading"
     :headData="state.headData"
     :tableData="state.tableData"
     ref="table"
   ></swiper-table>
-  <!-- <van-checkbox-group v-model="state.eva">
-  </van-checkbox-group> -->
-  <!-- <van-action-bar>
-     <van-action-bar-icon icon="shop-o" text="学生" badge="12" />
-     <van-action-bar-icon icon="shop-o" text="分数" badge="12" />
-    <van-action-bar-button type="danger" text="立即评价" @click="onClickButton"/>
-  </van-action-bar> -->
+  </van-dropdown-menu>
   <van-pagination
     v-model="state.currentPage"
     :page-count="state.count"
@@ -43,7 +31,7 @@
 <script lang="ts">
 import { createApp, reactive, computed, onMounted, nextTick, ref } from "vue";
 import { useRouter } from "vue-router";
-import { getData, getOption, getSubject, getEvaluate, getCurrentWeek} from "/@/api/teacher/evaluate";
+import { getData, getOption, getCurrentWeek} from "/@/api/teacher/statistics/subject";
 import { Notify, Checkbox, CheckboxGroup} from "vant";
 import store from '/@/store'
 import swiperTable from "/@/components/swiperTable.vue"
@@ -53,30 +41,23 @@ export default {
   setup(props, context) {
     const state = reactive({
       searchValue:  {
-        pindex: 0,
-        number: 10,
-        subject: "",
-        week: 0,
-        classId: '',
-        grade: ''
+      pindex: 0,
+      week: 0,
+      number: 10,
+      target: 'type',
+      gradeId: '',
+      classId: '',
+      calssName: ''
       },
       checkWeek: '',
       gradeOption: [],
       classOption: [],
       tempOption: [],
       weekOption: [],
-      subjectOption: [],
-      cityOption:[],
       headData: [
-        { text: '名字', value: 'name' },
-        { text: '学号', value: 'id'},
-        { text: '本周', value: 'weeklyScore'},
-        { text: '总分', value:'totalScore'}
       ],
       tableData: [],
       checked: false,
-      evaData: [],
-      eva: [],
       city:'',
       isLoading: false,
       currentPage: 1,
@@ -85,26 +66,47 @@ export default {
 
     const table = ref(null)
 
-    const getMyData = (() => {
-      state.searchValue.pindex = state.currentPage - 1
+
+    const getMyData = () => {
+      state.searchValue.pindex = state.currentPage - 1;
       state.isLoading = true;
       getData(state.searchValue).then((res) => {
         state.count = Math.ceil(res.result.totalnum / 10)
-        state.tableData = res.result.data
-        state.isLoading = false;
-        if (res.result.data.length) 
+        res.result = res.result.data[0]
+        if (res.result.cols && res.result.cols.length)  {
+          res.result.cols.forEach((item, index) => {
+            console.log(res.result.cols[index])
+            state.headData.push({ text: res.result.cols[index], value:''})
+          })
+          state.tableData = res.result.cols;
           table.value.print()
-      })
-    })
-
-    function getMyEvaluate() {
-      getEvaluate(state.evaData,state.eva).then((res) => {
-        state.evaData = res.result.data;
-        // state.bodyData = res.result.data;
-      })
+        }
+        state.isLoading = false;
+        // console.log(res.result.data.length)
+        //  if (res.result.data.length) {
+        //     console.log(111)
+        //  }
+        //     table.value.print()
+      });
+    }
+    const changeGrade = (value) => {
+      const target = state.tempOption.find((item) => {
+        return item.id === value;
+      });
+      state.classOption = [];
+      if (!target) {
+        state.searchValue.classId = "";
+        getMyData();
+        return;
+      }
+      target.data.forEach((item) => {
+        state.classOption.push({ text: item.className, value: item.classId });
+      });
+      if (state.gradeOption.length) {
+        state.searchValue.classId = state.classOption[0].value;
+      }
+      getMyData();
     };
-
-
 
     const changeOption = ((value) => {
       state.currentPage = 1
@@ -115,7 +117,7 @@ export default {
     onMounted(() => {
       // 获取年级班级
       const promise1 = new Promise((resolve, reject) => {
-        getOption().then((res) => {
+        getOption(state.searchValue).then((res) => {
           // 改变格式
           var map = {};
           for (let i = 0; i < res.result.data.length; i++) {
@@ -124,6 +126,8 @@ export default {
               state.tempOption.push({
                 id: ai.gradeId,
                 name: ai.gradeName,
+                className: ai.className,
+                classId: ai.classId,
                 data: [ai],
               });
               map[ai.gradeId] = ai;
@@ -137,22 +141,25 @@ export default {
               }
             }
           }
-          console.log(state.tempOption);
-          
           // 展示
           state.tempOption.forEach((item) => {
             state.gradeOption.push({ text: item.name, value: item.id})
           })
+          //选中
           if (state.gradeOption.length) {
-            state.searchValue.grade = state.gradeOption[0].value
-            const temp = state.tempOption[0]
+            state.searchValue.gradeId = state.gradeOption[0].value;
+            const temp = state.tempOption[0];
             temp.data.forEach((item) => {
-              state.classOption.push({ text: item.className, value: item.classId})
-            })
+              state.classOption.push({
+                text: item.className,
+                value: item.classId,
+              });
+            });
             if (state.gradeOption.length) {
-              state.searchValue.classId = state.classOption[0].value
+              state.searchValue.classId = state.classOption[0].value;
             }
           }
+
           // 获取当前周次
           getCurrentWeek(store.state.schoolId).then((res) => {
             store.commit('setCurrentWeek', res)
@@ -167,33 +174,19 @@ export default {
           resolve()
         });
       });
-      // 初次获取城市
+
       promise1.then(() => {
         const promise2 = new Promise((resolve, reject) => {
-          // 获取科目
-          getSubject(state.searchValue.classId).then((res) => {
-            res.result.data.forEach((item, index) => {
-              state.subjectOption.push({ text: item, value: index})
-            })
-            state.searchValue.subject = state.subjectOption[0].value
-            console.log(state.searchValue.subject)
-            resolve()
-          });
-        });
-
-        promise2.then(() => {
-          console.log(state.searchValue, 111);
-          
           getMyData()
-        })
-        getMyEvaluate()
+        });
       })
     });
 
     return {
       state,
       getMyData,
-      changeOption
+      changeOption,
+      changeGrade,
     };
   },
 };
@@ -217,4 +210,3 @@ export default {
     margin-bottom: 30px;
   }
 </style>
-
