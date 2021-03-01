@@ -3,6 +3,8 @@
     <div class="card">
       <van-row type="flex" justify="center" class="card-row">
         <h2 class="title">学校评价系统</h2>
+      </van-row>
+      <van-row type="flex" justify="center" class="card-row">
         <van-col span="18">
           <!-- 请选择城市 -->
           <van-field
@@ -76,6 +78,11 @@
               type="primary"
               @click="myLogin"
             >登录</van-button>
+        </van-col>
+      </van-row>
+      <van-row>
+        <van-col>
+          <img alt="" src="../assets/loginElem.png" class="pic">
         </van-col>
       </van-row>
     </div>
@@ -284,12 +291,19 @@ export default {
     position: absolute;
     width: 100%;
     height: 100%;
-    background-color: #fff;
+    z-index: -2;
+    background: linear-gradient(#90e0ef,#caf0f8);
     .card{
       margin-top: 50px;
     }
     .btn-login {
       margin-top: 20px;
+    }
+    .pic {
+      position: absolute;
+      bottom: 0px;
+      right: 0px;
+      z-index: -1;
     }
   }
   ::v-deep .van-field__left-icon {
