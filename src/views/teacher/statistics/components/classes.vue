@@ -72,17 +72,15 @@ export default {
       getData(state.searchValue).then((res) => {
         state.count = Math.ceil(res.result.totalnum / 10)
         // res.result = res.result.data[0]
+        state.tableData = res.result.data[0].integrallist;
         if (res.result.data && res.result.data.length)  {
-          state.tableData = res.result.data;
-          const typesLen = res.result.data[0].types.length
-          state.headData = []
+          // state.tableData = res.result.data[0].integrallist;
+          const typesLen = res.result.data[0].types.length;
           for (let i = 0; i < typesLen; i++){
-            state.headData.push({ text: `${res.result.data[0].types[i]}`, value: `typeScores`, index: i})
-            console.log(`${res.result.data[0].types[i]}`);
+            state.headData.push({ text: `${res.result.data[0].types[i]}`, value: `typeScores`, index: i});
           }
 
-          // console.log(res.result.data[0].integrallist[0].rank);
-          console.log(res.result);
+          // console.log(res.result);
           table.value.print()
         }
         state.isLoading = false;

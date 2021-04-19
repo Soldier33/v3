@@ -47,7 +47,8 @@ export default {
       target: 'type',
       gradeId: '',
       classId: '',
-      calssName: ''
+      calssName: '',
+      check: 1,
       },
       checkWeek: '',
       gradeOption: [],
@@ -55,6 +56,8 @@ export default {
       tempOption: [],
       weekOption: [],
       headData: [
+        { text: '学号', value: 'id'},
+        { text: '姓名', value: 'name'},
       ],
       tableData: [],
       checked: false,
@@ -72,21 +75,15 @@ export default {
       state.isLoading = true;
       getData(state.searchValue).then((res) => {
         state.count = Math.ceil(res.result.totalnum / 10)
-        res.result = res.result.data[0]
-        if (res.result.cols && res.result.cols.length)  {
-          res.result.cols.forEach((item, index) => {
-            console.log(res.result.cols[index])
-            state.headData.push({ text: res.result.cols[index], value:''})
-          })
-          state.tableData = res.result.cols;
-          table.value.print()
+        state.tableData = res.result.data[0].items;
+        if (res.result.data && res.result.data.length)  {
+          const colsLen = res.result.data[0].cols.length;
+          for (let i = 0; i < colsLen; i++){
+            state.headData.push({ text: `${res.result.data[0].cols[i]}`, value: `scores`, index: i});
+                      }
+          table.value.print();
         }
         state.isLoading = false;
-        // console.log(res.result.data.length)
-        //  if (res.result.data.length) {
-        //     console.log(111)
-        //  }
-        //     table.value.print()
       });
     }
     const changeGrade = (value) => {
@@ -187,6 +184,8 @@ export default {
       getMyData,
       changeOption,
       changeGrade,
+      table,
+      getOption
     };
   },
 };

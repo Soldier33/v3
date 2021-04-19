@@ -2,19 +2,18 @@ import request from '/@/utils/request'
 
 export function getOption() {
   return request({
-    url:  '/api/class/teach',
-    method: 'get'
+    url: `/api/class/teach`,
+    method: 'get',
   })
 }
 
 export function getData(data) {
   return request({
-    url: `/api/integral-statictis/class/${data.classId}/week/${data.week}`,
+    url : `/api/evaluation/teacher/week/${data.week}/class/${data.classId}/term/${data.termC}`,
     method: 'get',
     params: {
       pindex: data.pindex,
       number: data.number,
-      target: data.target
     }  })
 }
 
@@ -25,6 +24,17 @@ export function getCurrentWeek(schoolId) {
     method: 'get',
     params: {
       schoolId
+    }
+  })
+}
+
+export function getAllTerms(data) {
+  return request({
+    url: '/api/remark/comment/getAllTerms',
+    method: 'get',
+    params: {
+      count: data.count,
+      pindex: data.pindex
     }
   })
 }

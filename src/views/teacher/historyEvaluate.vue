@@ -1,9 +1,21 @@
 <template>
-  <van-dropdown-menu>
+  <div class="search">
+    <van-search
+      v-model="state.searchValue.keyword"
+      placeholder="请输入学生姓名"
+      @search="getMyData"
+    />
+  </div>
+   <van-dropdown-menu>
+      <van-dropdown-item
+      v-model="state.searchValue.term"
+      :options="state.termOption"
+      @change="changeOption"
+    />
     <van-dropdown-item
       v-model="state.searchValue.gradeId"
       :options="state.gradeOption"
-      @change="changeOption"
+      @change="changeGrade"
     />
     <van-dropdown-item
       v-model="state.searchValue.classId"
@@ -20,7 +32,6 @@
     :tableData="state.tableData"
     ref="table"
   ></swiper-table>
-    <!-- :headProps="state.headProps" -->
   </van-dropdown-menu>
   <van-pagination
     v-model="state.currentPage"
@@ -32,7 +43,7 @@
 <script lang="ts">
 import { createApp, reactive, computed, onMounted, nextTick, ref } from "vue";
 import { useRouter } from "vue-router";
-import { getData, getOption, getCurrentWeek} from "/@/api/teacher/statistics/convention";
+import { getData, getOption, getCurrentWeek, getAllTerms } from "/@/api/teacher/historyEvaluate";
 import { Notify, Checkbox, CheckboxGroup} from "vant";
 import store from '/@/store'
 import swiperTable from "/@/components/swiperTable.vue"
@@ -43,42 +54,73 @@ export default {
     const state = reactive({
       searchValue:  {
       pindex: 0,
-      week: 0,
+      week: '',
       number: 10,
       target: 'type',
       gradeId: '',
-      classId: ''
+      classId: '',
+      keyword: '',
+      term: "",
+      termC: ""
       },
       checkWeek: '',
       gradeOption: [],
       classOption: [],
       tempOption: [],
+      termOption: [],
       weekOption: [],
-      headData:[
-        {text: "学号", value: 0 },
-        {text: "姓名", value: 1 }
-        ],
+      headData: [
+        { text: '学号', value: 'id'},
+        { text: '学生', value: 'name'}
+      ],
       tableData: [],
       checked: false,
-      isLoading: false,
+      city:'',
+      isLoading: true,
       currentPage: 1,
       count: 0,
     });
 
     const table = ref(null)
-    const getMyData = (() => {
-      state.searchValue.pindex = state.currentPage - 1
+
+
+    const getMyData = () => {
+      state.searchValue.pindex = state.currentPage - 1;
       state.isLoading = true;
       getData(state.searchValue).then((res) => {
-        state.count = Math.ceil(res.result.totalnum / 10)
-        state.tableData = res.result.data
+        // state.count = Math.ceil(res.result.totalnum / 10)
+       
+        state.tableData = res.result.data[0].items;
+        if (res.result.data && res.result.data.length)  {
+          const colsLen = res.result.data[0].cols.length;
+          for(let i = 0; i < colsLen ; i++) {
+            state.headData.push({text: `${res.result.data[0].cols[i]}`, value:`scores`, index: i});
+          }
+          table.value.print()
+        }
+
         state.isLoading = false;
-      })
-    })
-
+      });
+    }
+    const changeGrade = (value) => {
+      const target = state.tempOption.find((item) => {
+        return item.id === value;
+      });
+      state.classOption = [];
+      if (!target) {
+        state.searchValue.classId = "";
+        getMyData();
+        return;
+      }
+      target.data.forEach((item) => {
+        state.classOption.push({ text: item.className, value: item.classId });
+      });
+      if (state.gradeOption.length) {
+        state.searchValue.classId = state.classOption[0].value;
+      }
+      getMyData();
+    };
     
-
-
     const changeOption = ((value) => {
       state.currentPage = 1
       getMyData()
@@ -88,6 +130,7 @@ export default {
     onMounted(() => {
       // 获取年级班级
       const promise1 = new Promise((resolve, reject) => {
+       
         getOption(state.searchValue).then((res) => {
           // 改变格式
           var map = {};
@@ -112,11 +155,11 @@ export default {
               }
             }
           }
-
           // 展示
           state.tempOption.forEach((item) => {
             state.gradeOption.push({ text: item.name, value: item.id})
           })
+          //选中
           if (state.gradeOption.length) {
             state.searchValue.gradeId = state.gradeOption[0].value;
             const temp = state.tempOption[0];
@@ -131,17 +174,37 @@ export default {
             }
           }
 
-          // 获取当前月份（未改好）
+          // 获取当前周次
           getCurrentWeek(store.state.schoolId).then((res) => {
             store.commit('setCurrentWeek', res)
             sessionStorage.setItem("currentWeek", res);
             for (let i = 1; i <= res; i++) {
-              const str = `${i}月`
+              const str = `第${i}周`
               state.weekOption.push({ text: str, value: i })
             }
             const len = state.weekOption.length - 1
             state.searchValue.week = state.weekOption[len].value
           })
+
+          //获取学期
+        getAllTerms(state.searchValue).then((res) => {
+          for (let i = 0; i < res.result.data.length; i++) {
+            const ai = res.result.data[i];
+            state.termOption.push({
+                text: ai.name,
+                value: ai.name
+            })
+          }
+          if (state.termOption.length) {
+              state.searchValue.term = state.termOption[0].value;
+
+              //转换学期格式
+            state.searchValue.termC = (state.searchValue.term).replace('-','_');
+            state.searchValue.termC = (state.searchValue.termC).replace('学年度第一学期','_1');
+            state.searchValue.termC = "_" + (state.searchValue.termC).replace('学年度第二学期','_2');
+            }
+        });
+
           resolve()
         });
       });
@@ -156,7 +219,9 @@ export default {
     return {
       state,
       getMyData,
+      getOption,
       changeOption,
+      changeGrade,
       table
     };
   },

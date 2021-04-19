@@ -20,8 +20,8 @@ export default {
       title: {
         teacher: [
           {text: "学生评价", value: '/page/pc/evaluate'},
-          {text: "历史评价", value: '/w'},
-          {text: "历史积分", value: '/w'},
+          {text: "历史评价", value: '/page/pc/historyEvaluate'},
+          {text: '历史通知', value: '/page/pc/historyAnnounce'},
           {text: "学生信息", value: '/page/pc/information'},
           {text: "评价统计", value: '/page/pc/statistics'},
           {text: "排行榜", value: '/w'},

@@ -75,13 +75,13 @@ export default {
       state.isLoading = true;
       getData(state.searchValue).then((res) => {
         state.count = Math.ceil(res.result.totalnum / 10)
-        res.result = res.result.data[0]
-        // console.log(res.result.cols.length)
-        if (res.result.cols && res.result.cols.length)  {
-          res.result.cols.forEach((item, index) => {
-            state.headData.push({ text: item, value:'scores', index: index})
-          })
-          state.tableData = res.result.cols;
+        //res.result = res.result.data[0]
+        state.tableData = res.result.data[0].items;
+        if (res.result.data && res.result.data.length)  {
+          const colsLen = res.result.data[0].cols.length;
+          for(let i = 0; i < colsLen ; i++) {
+            state.headData.push({text: `${res.result.data[0].cols[i]}`, value:`scores`, index: i});
+          }
           table.value.print()
         }
 
@@ -184,6 +184,7 @@ export default {
     return {
       state,
       getMyData,
+      getOption,
       changeOption,
       changeGrade,
       table

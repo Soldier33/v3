@@ -20,6 +20,14 @@ const teacherRoutes = [
         path: 'statistics',
         component: () => import('/@/views/teacher/statistics/index.vue'),
       },
+      {
+        path: 'historyEvaluate',
+        component: () => import('/@/views/teacher/historyEvaluate.vue'),
+      },
+      {
+        path: 'historyAnnounce',
+        component: () => import('/@/views/teacher/historyAnnounce.vue'),
+      }
     ]
   },
   
